@@ -1,0 +1,25 @@
+import pandas as pd
+import numpy as np
+from scipy.stats import linregress
+np.random.seed(42)
+time = np.arange(4 * 5)
+trend_base = 100 + 5 * time
+seasonal_factor = np.tile([1.05, 1.15, 0.90, 0.98], 5)
+np_data = trend_base * seasonal_factor + np.random.normal(0, 5, len(time))
+ts_data = pd.Series(np_data, index=pd.to_datetime(pd.date_range(start='2020-01-01', periods=20, freq='QS')))
+time_index = np.arange(len(ts_data))
+slope, intercept, r_value, p_value, std_err = linregress(time_index, ts_data.values)
+
+
+print(f"\n--- Analitychne Vyznachennya Trenda (Merylo: Mashtabovanist) ---")
+print(f"Koefitsiyent nahylu (Trend Slope): {slope:.3f}")
+print(f"P-value (Statystychne znachennya): {p_value:.6f}")
+
+
+if p_value < 0.05 and slope > 0:
+    print("\n✅ Trehd prysutniy i ye zrostayuchym.")
+    print(f"Vyvedennya: Mashtabovanist zrostaye v seredniomu na {slope:.2f} odynyts na kvartal.")
+elif p_value < 0.05 and slope < 0:
+    print("✅ Trehd prysutniy i ye spadnynym.")
+else:
+    print("❌ Trehd statystychno ne znachushchyy.")
