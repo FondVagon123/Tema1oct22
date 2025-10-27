@@ -1,0 +1,21 @@
+import pandas as pd
+import numpy as np
+from statsmodels.tsa.api import SimpleExpSmoothing
+
+
+np.random.seed(42)
+ts_data = pd.Series(np.linspace(150, 250, 20) + np.random.normal(0, 10, 20),
+                    index=pd.to_datetime(pd.date_range(start='2020-01-01', periods=20, freq='QS')))
+
+
+ses_model = SimpleExpSmoothing(ts_data, initialization_method="estimated").fit(smoothing_level=0.2, optimized=False)
+
+
+ts_smooth = ses_model.fittedvalues
+
+
+print("--- Mashtabovanist: Porivnyannya Zgladzhuvannya (Pochatok) ---")
+print("Originalni Dany:")
+print(ts_data.head(5).round(2))
+print("\nZgladzheni Dany (Trend):")
+print(ts_smooth.head(5).round(2))
