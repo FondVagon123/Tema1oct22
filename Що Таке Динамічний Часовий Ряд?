@@ -1,0 +1,21 @@
+import pandas as pd
+import numpy as np
+dates = pd.date_range(start='2025-01-01', periods=12, freq='ME')
+np.random.seed(42)
+base_growth = np.linspace(100, 250, 12)
+X_scalability = base_growth + np.random.normal(0, 30, 12)
+X_scalability = X_scalability.round().astype(int)
+
+
+Y_monetization = np.zeros(12)
+Y_monetization[0] = 75 * 80 + np.random.normal(0, 500)
+
+
+for i in range(1, 12):
+    Y_monetization[i] = 75 * X_scalability[i-1] + np.random.normal(0, 500)
+df_dynamic = pd.DataFrame({
+    'Масштабованість (Нові Користувачі)': X_scalability,
+    'Монетизація (Дохід, грн)': Y_monetization.astype(int)
+}, index=dates)
+print("--- 1. Динамічний Часовий Ряд (Монетизація залежить від Масштабованості з лагом 1) ---")
+print(df_dynamic.head())
