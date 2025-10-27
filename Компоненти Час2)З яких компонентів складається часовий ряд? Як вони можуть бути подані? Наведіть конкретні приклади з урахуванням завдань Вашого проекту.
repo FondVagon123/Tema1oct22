@@ -1,0 +1,25 @@
+import pandas as pd
+import numpy as np
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+
+np.random.seed(42)
+time = np.arange(4 * 5) # 20 kvartaliv
+trend_base = 100 + 5 * time
+
+
+seasonal_factor = np.tile([1.05, 1.15, 0.90, 0.98], 5)
+np_data = trend_base * seasonal_factor + np.random.normal(0, 5, len(time))
+ts_data = pd.Series(np_data, index=pd.to_datetime(pd.date_range(start='2020-01-01', periods=20, freq='QS')))
+
+
+decomposition = seasonal_decompose(ts_data, model='multiplicative', period=4)
+
+
+print("--- Komponenty Obsyahu Tranzaktsiy (Multiplikatyvna Model) ---")
+print("\nTrend (T_t) - Bazova spryamovanist (ostanni 4 znachennya):")
+print(decomposition.trend.tail(4).round(2))
+print("\nSezonnist (S_t) - Koefitsiyenty mnozhennya (pershi 4 znachennya):")
+print(decomposition.seasonal.head(4).round(3))
+print("\nZalyshkova pomylka (E_t) - Nerehulyarnyy shum (pershi 4 znachennya):")
+print(decomposition.resid.head(4).round(3))
